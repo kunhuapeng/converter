@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title> New Document </title>
+	<meta charset="utf-8">
+	<script src="../src/converter.js"></script>
+	<style type="text/css">
+		div{margin:20px 30px}
+	</style>
+</head>
+
+<body>
+	<div id="json_old"></div>
+	<div id="json_new"></div>
+	<div id="json_new1"></div>
+</body>
+</html>
+<script>
+	var data = {
+		name: "小明",
+		age: 18,
+		sex: "男",
+		birthday: "2001-12-11",
+		grade: {
+			mathematics: "B+",
+			language: "s"
+		},
+		family: {
+			father: "Tom",
+			mather: "Angelina"
+		}
+	};
+
+	converter.config({
+		key: "exp1",
+		opts: {
+			name: {t: "", k: "name", d: ""},
+			age: {t: "", k: "age", d: ""},
+			sex: {t: "", k: "sex", d: ""},
+			birthday: {t: "", k: "birthday", d: ""},
+			mathematics: {t: "", k: "grade.mathematics", d: ""},
+			language: {t: "", k: "grade.language", d: ""},
+			father: {t: "", k: "family.father", d: ""},
+			mather: {t: "", k: "family.mather", d: ""}
+		}
+	});
+
+	var model = converter.factory.create("exp1");
+
+	var newJson = new model(data);
+
+	newJson = newJson.getJson();
+
+	converter.config({
+		key: "person",
+		opts: {
+			name: {t: "", k: "name", d: ""},
+			age: {t: "", k: "age", d: ""},
+			sex: {t: "", k: "sex", d: ""},
+			birthday: {t: "", k: "birthday", d: ""}
+		}
+	});
+	converter.config({
+		key: "grade",
+		opts: {
+			mathematics: {t: "", k: "mathematics", d: ""},
+			language: {t: "", k: "language", d: ""}
+		}
+	});
+	converter.config({
+		key: "family",
+		opts: {
+			father: {t: "", k: "father", d: ""},
+			mather: {t: "", k: "mather", d: ""}
+		}
+	});
+
+	var person = converter.factory.create("person"),
+		grade = converter.factory.create("grade"),
+		family = converter.factory.create("family");
+	converter.config({
+		key: "exp2",
+		opts: {
+			person: {t: "", k: "", d: function(data){return new person(data).getJson()}},
+			grade: {t: "", k: "", d: function(data){return new grade(data).getJson()}},
+			family: {t: "", k: "", d: function(data){return new family(data).getJson()}}
+		}
+	});
+
+	var model2 = converter.factory.create("exp2");
+
+	var newJson1 = new model2(newJson);
+	newJson1 = newJson1.getJson();
+
+	var div1 = document.getElementById("json_old"),
+		div2 = document.getElementById("json_new"),
+		div3 = document.getElementById("json_new1");
+	div1.innerHTML = "old json:<br /><br />" + JSON.stringify(data);
+	div2.innerHTML = "exp1 json:<br /><br />" + JSON.stringify(newJson);
+	div3.innerHTML = "exp2 json:<br /><br />" + JSON.stringify(newJson1);
+</script>
